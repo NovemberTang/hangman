@@ -1,6 +1,6 @@
 package novembertang.hangman
 
-trait Ascii {
+object Ascii {
 
   val images: Map[Int, String] = List(
     "",
@@ -81,7 +81,7 @@ trait Ascii {
 
   ).reverse.zipWithIndex.map(t => (t._2, t._1)).toMap
 
-  val lives: Int = images.size -1
+  val totalLives: Int = images.size -1
 
 
 

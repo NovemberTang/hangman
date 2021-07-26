@@ -3,31 +3,33 @@ package novembertang.hangman
 import scala.annotation.tailrec
 import scala.collection.SortedSet
 
-object Game extends Ascii {
+import Ascii.images
+
+object Game{
 
   @tailrec
-  def hangman(word: String, guessedLetters: SortedSet[Char] = SortedSet.empty[Char], lives: Int = lives): Unit = {
+  def hangman(state: State): Unit = {
 
-    val wordProgress: String = currentWordProgress(word, guessedLetters)
+    val wordProgress: String = currentWordProgress(state.word, state.guessedLetters)
 
-    printCurrentProgress(guessedLetters, lives, wordProgress)
+    printCurrentProgress(state.guessedLetters, state.lives, wordProgress)
 
-    val finishedWord = wordProgress == word
-    val livesRemaining = lives > 0
+    val finishedWord = wordProgress == state.word
+    val livesRemaining = state.lives > 0
 
     (livesRemaining, finishedWord) match {
-      case (false, _) => println(s"Out of lives. You lose!\nThe word was $word")
+      case (false, _) => println(s"Out of lives. You lose!\nThe word was ${state.word}")
       case (true, true) => println("You win!")
       case (true, false) =>
-        val letter: Char = IO.getLetter(guessedLetters)
-        val updatedLetterSet = guessedLetters + letter
-        if (word.contains(letter)) {
+        val letter: Char = IO.getLetter(state.guessedLetters)
+        val updatedLetterSet = state.guessedLetters + letter
+        if (state.word.contains(letter)) {
           println(s"$letter was correct!")
-          hangman(word, updatedLetterSet, lives)
+          hangman(State(state.word, updatedLetterSet, state.lives))
         }
         else {
           println(s"$letter was incorrect")
-          hangman(word, updatedLetterSet, lives - 1)
+          hangman(State(state.word, updatedLetterSet, state.lives - 1))
         }
     }
   }
